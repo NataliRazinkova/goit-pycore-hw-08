@@ -88,19 +88,18 @@ def parse_input(user_input):
     cmd = cmd.strip().lower()
     return cmd, args
 
-@input_error
 def main():
-    filename = "address_book.pkl"
-    book = AddressBook()
-    book.load_from_file(filename)
+    book = load_data()  
+
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
         command, args = parse_input(user_input)
 
         if command in ["close", "exit"]:
-            book.save_to_file(filename)
-            print("Address book saved. Good bye!")
+            print("Saving data...")
+            save_data(book)  
+            print("Good bye!")
             break
         elif command == "hello":
             print("How can I help you?")
@@ -118,7 +117,7 @@ def main():
             print(book.get_contact_phone(name))
         elif command == "add-birthday":
             name, day, month, year = args
-            book.change_contact(name, None, (day, month, year))
+            book.change_contact(name, None, (int(day), int(month), int(year)))
             print("Birthday added.")
         elif command == "show-birthday":
             name = args[0]
@@ -128,11 +127,10 @@ def main():
             if birthdays:
                 print("Upcoming birthdays:")
                 for contact in birthdays:
-                    print(f"{contact.name} - {contact.birthday.day}.{contact.birthday.month}.{contact.birthday.year}")
+                    print(f"{contact.data['name']} - {contact.data['birthday']}")
             else:
                 print("No upcoming birthdays in the next week.")
         else:
             print("Invalid command.")
 
-if __name__ == "__main__":
-    main()
+        save_data(book)  
